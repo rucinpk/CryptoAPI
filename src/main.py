@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from classical.alphabet import Alphabet
 from classical.caesar import Caesar
 from classical.vigenere import Vigenere
+from classical.analysis.frequency import FrequencyAnalyser
 
 app = FastAPI()
 
@@ -37,6 +38,12 @@ class VigenereEncryptInput(VigenereInput):
 
 class VigenereDecryptInput(VigenereInput):
     ciphertext: str = "LXFOPV EF RNHR"
+
+
+class FrequencyInput(BaseModel):
+    alphabet: Optional[str] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    text: str = "Hello World!"
+    ignore_case: Optional[bool] = True
 
 
 @app.post("/classical/caesar/encrypt")
@@ -77,3 +84,13 @@ async def vigenere_decrypt(input: VigenereDecryptInput):
     result = vigenere.decrypt(input.ciphertext, input.key)
 
     return {"plaintext": result}
+
+
+@app.post("/classical/analysis/frequency")
+async def calculate_frequency(input: FrequencyInput):
+    alphabet = Alphabet(input.alphabet, input.ignore_case)
+
+    frequency_caculator = FrequencyAnalyser(alphabet)
+    result = frequency_caculator.calculate(input.text)
+
+    return {"frequencies": result}

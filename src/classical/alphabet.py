@@ -23,7 +23,7 @@ class Alphabet:
     def _get_index_at_character(self, character: str) -> int:
         return self.character_to_index[character]
 
-    def _prepare_text(self, character: str) -> str:
+    def transform(self, character: str) -> str:
         if character.isspace():
             raise WhiteSpaceError("Character is whitespace")
         if self.ignore_case and character.isalpha():
@@ -33,7 +33,7 @@ class Alphabet:
         return character
 
     def _prepare_and_get_character_index(self, character: str) -> int:
-        character = self._prepare_text(character)
+        character = self.transform(character)
         return self._get_index_at_character(character)
 
     def _get_character_at_index(self, index: int) -> str:
