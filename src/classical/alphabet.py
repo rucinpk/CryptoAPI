@@ -21,6 +21,8 @@ class Alphabet:
         for i, letter in enumerate(alphabet):
             self.index_to_character[i] = letter
 
+        self._current = 0
+
     def _get_index_at_character(self, character: str) -> int:
         return self.character_to_index[character]
 
@@ -68,3 +70,13 @@ class Alphabet:
 
     def __len__(self):
         return self.length
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> str:
+        self._current += 1
+        if self._current < len(self):
+            return self.alphabet[self._current - 1]
+        self._current = 0
+        raise StopIteration

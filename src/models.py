@@ -14,7 +14,11 @@ class ClassicalCipherInput(BaseModel):
 
 class FrequencyInput(ClassicalCipherInput):
     text: str = "Hello World!"
-    ignore_case: Optional[bool] = True
+
+
+class ChiSquaredInput(ClassicalCipherInput):
+    text: str = "Hello World!"
+    language: str = "ENGLISH"
 
 
 class CaesarInput(ClassicalCipherInput):
