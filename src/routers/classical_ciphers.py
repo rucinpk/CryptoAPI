@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from classical.caesar import Caesar
 from classical.vigenere import Vigenere
 from classical.alphabet import Alphabet
-from models import CaesarEncryptInput, CaesarDecryptInput, VigenereEncryptInput, VigenereDecryptInput
+from models import CaesarEncryptInput, CaesarDecryptInput, FrequencyInput, VigenereEncryptInput, VigenereDecryptInput
+from classical.solver.caesar import CaesarSolver
 
 router = APIRouter(
     prefix="/classical",
@@ -26,6 +27,16 @@ async def caesar_decrypt(input: CaesarDecryptInput):
 
     caesar = Caesar(alphabet)
     result = caesar.decrypt(input.ciphertext, input.key)
+
+    return {"plaintext": result}
+
+
+@router.post("/caesar/solve")
+async def caesar_decrypt(input: FrequencyInput):
+    alphabet = Alphabet(**input.alphabet.dict())
+
+    caesar_solver = CaesarSolver(alphabet)
+    result = caesar_solver.solve(input.text, "ENGLISH")
 
     return {"plaintext": result}
 
