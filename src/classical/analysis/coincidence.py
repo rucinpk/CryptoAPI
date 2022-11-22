@@ -1,6 +1,3 @@
-
-from typing import Dict
-
 from classical.alphabet import Alphabet
 
 

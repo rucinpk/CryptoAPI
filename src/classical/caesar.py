@@ -1,7 +1,4 @@
-
-from fastapi import HTTPException
-
-from classical.alphabet import Alphabet, WhiteSpaceError
+from classical.alphabet import Alphabet
 
 
 class Caesar:
@@ -9,17 +6,10 @@ class Caesar:
     def __init__(self, alphabet: Alphabet) -> None:
         self.alphabet = alphabet
 
-    def _caesar_core(self, plaintext, key, transform_func):
-        result = []
-        for letter in plaintext:
-            try:
-                encrypted = transform_func(letter, key)
-            except WhiteSpaceError as e:
-                encrypted = letter
-            except AttributeError as e:
-                raise HTTPException(
-                    status_code=400, detail="Character not found") from e
-            result.append(encrypted)
+    def _caesar_core(self, text, key, transform_func):
+        text = self.alphabet.preprocess(text)
+        result = list(
+            map(lambda letter: transform_func(letter, key), text))
         return "".join(result)
 
     def encrypt(self, plaintext: str, key: int) -> str:

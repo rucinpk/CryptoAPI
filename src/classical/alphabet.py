@@ -5,15 +5,16 @@ class WhiteSpaceError(AttributeError):
 
 class Alphabet:
 
-    def __init__(self, alphabet: str, ignore_case: bool) -> None:
+    def __init__(self, letters: str, ignore_case: bool, strip_whitespace) -> None:
         if ignore_case:
-            alphabet = alphabet.upper()
+            alphabet = letters.upper()
 
         self.character_to_index = {}
         self.index_to_character = {}
         self.length = len(alphabet)
         self.alphabet = alphabet
         self.ignore_case = ignore_case
+        self.strip_whitespace = strip_whitespace
 
         for i, letter in enumerate(alphabet):
             self.character_to_index[letter] = i
@@ -23,40 +24,46 @@ class Alphabet:
     def _get_index_at_character(self, character: str) -> int:
         return self.character_to_index[character]
 
-    def transform(self, character: str) -> str:
-        if character.isspace():
-            raise WhiteSpaceError("Character is whitespace")
-        if self.ignore_case and character.isalpha():
-            character = character.upper()
-        if character not in self.character_to_index:
-            raise AttributeError("Character not found in alphabet")
-        return character
+    def preprocess(self, text: str) -> str:
+        if self.strip_whitespace:
+            text = "".join(
+                list(filter(lambda character: not character.isspace(), text)))
+        if self.ignore_case:
+            text = "".join(
+                list(map(lambda character: character.upper(), text)))
+        text = "".join(list(
+            filter(lambda character: character in self.character_to_index, text)))
 
-    def _prepare_and_get_character_index(self, character: str) -> int:
-        character = self.transform(character)
-        return self._get_index_at_character(character)
+        return text
+
+    def strip(self, text: str) -> str:
+        return "".join(list(filter(lambda letter: letter in self.alphabet, text)))
 
     def _get_character_at_index(self, index: int) -> str:
         return self.index_to_character[index % len(self)]
 
     def add(self, character: str, value: int) -> str:
-        result_character_index = self._prepare_and_get_character_index(
-            character) + value
+        index = self._get_index_at_character(character)
+        result_character_index = index + value
         return self._get_character_at_index(result_character_index)
 
     def sub(self, character: str, value: int) -> str:
-        result_character_index = self._prepare_and_get_character_index(
-            character) - value
+        index = self._get_index_at_character(character)
+        result_character_index = index - value
         return self._get_character_at_index(result_character_index)
 
     def add_letter(self, character: str, value: str) -> str:
-        result_character_index = self._prepare_and_get_character_index(
-            character) + self._prepare_and_get_character_index(value)
+        left = self._get_index_at_character(character)
+        value = self.preprocess(value)
+        right = self._get_index_at_character(value)
+        result_character_index = left + right
         return self._get_character_at_index(result_character_index)
 
     def sub_letter(self, character: str, value: str) -> str:
-        result_character_index = self._prepare_and_get_character_index(
-            character) - self._prepare_and_get_character_index(value)
+        left = self._get_index_at_character(character)
+        value = self.preprocess(value)
+        right = self._get_index_at_character(value)
+        result_character_index = left - right
         return self._get_character_at_index(result_character_index)
 
     def __len__(self):
