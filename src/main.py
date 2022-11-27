@@ -4,11 +4,14 @@ from classical.alphabet import Alphabet
 from classical.analysis.frequency import FrequencyAnalyser
 from classical.analysis.coincidence import CoincidenceCalculator
 from models import ChiSquaredInput, FrequencyInput
-from routers import classical_ciphers
+from routers import classical_ciphers, encoders, modern
 from classical.analysis.chi_squared import ChiSquaredCalculator
+
 
 app = FastAPI()
 app.include_router(classical_ciphers.router)
+app.include_router(encoders.router)
+app.include_router(modern.router)
 
 
 @app.post("/classical/analysis/frequency")
