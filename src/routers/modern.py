@@ -50,3 +50,13 @@ async def detect_xor(input: ClassicalCipherInput = Body(...), file: UploadFile =
     result = xor_detector.detect(strings, "ENGLISH", threshold=50)
 
     return {"plaintext": result}
+
+
+@router.post("/xor/solve-multi-xor")
+async def solve_multi_key_xor(input: FrequencyInput):
+    alphabet = Alphabet(**input.alphabet.dict())
+
+    xor_solver = MultiXorSolver(alphabet)
+    result = xor_solver.solve(input.text, "ENGLISH", threshold=40)
+
+    return {"plaintext": result}
